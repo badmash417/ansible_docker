@@ -15,8 +15,9 @@
 
     - name: Clone Docker Apache Container Repository
       git:
-        repo: https://github.com/httpd/docker-httpd.git
+        repo: git@github.com:httpd/docker-httpd.git
         dest: /opt/docker-httpd
+        version: main  # Specify the branch or tag if needed
 
     - name: Deploy Docker Container
       command: "docker-compose up -d"
