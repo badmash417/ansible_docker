@@ -1,6 +1,6 @@
 ---
 - name: Deploy Docker Container with Apache on localhost
-  hosts: localhost
+  hosts: http://192.168.56.1/
   become: yes
 
   vars:
