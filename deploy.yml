@@ -1,30 +1,29 @@
 ---
-- name: Deploy Docker Container with Apache on localhost
-  hosts: all
+- name: Deploy Apache Docker Container
+  hosts: localhost
   become: yes
 
-  vars:
-    container_subnet: "172.168.10.0/30"
-
   tasks:
-    - name: Install Docker
+    - name: Install Docker and Docker Compose
+      become: yes
       apt:
-        name: docker.io
+        name: "{{ item }}"
         state: present
+      loop:
+        - docker.io
+        - docker-compose
 
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
+    - name: Clone Docker Apache Container Repository
+      git:
+        repo: https://github.com/httpd/docker-httpd.git
+        dest: /opt/docker-httpd
 
-    - name: Pull Apache Docker Image
-      docker_image:
-        name: httpd:latest
+    - name: Deploy Docker Container
+      command: "docker-compose up -d"
+      args:
+        chdir: /opt/docker-httpd/2.4/
 
-    - name: Run Apache Container
-      docker_container:
-        name: apache_container
-        image: httpd:latest
-        ports:
-          - "80:80"
-        restart_policy: always
+    - name: Open Port 80 for Apache
+      ufw:
+        rule: allow
+        port: 80
