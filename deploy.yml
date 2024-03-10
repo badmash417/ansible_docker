@@ -1,24 +1,36 @@
 ---
-- name: Deploy Apache Docker Container
+- name: Deploy Docker Container with Apache
   hosts: localhost
   become: yes
 
   tasks:
-    - name: Install Docker and Docker Compose
-      become: yes
+    - name: Install Docker
       apt:
-        name: "{{ item }}"
+        name: docker.io
         state: present
-      loop:
-        - docker.io
-        - docker-compose
 
-    - name: Deploy Docker Container
-      command: "docker-compose up -d"
-      args:
-        chdir: /opt/docker-httpd/2.4/
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
 
-    - name: Open Port 80 for Apache
-      ufw:
-        rule: allow
-        port: 80
+    - name: Pull Apache Docker Image
+      docker_image:
+        name: httpd:latest
+
+    - name: Create Docker Network
+      docker_network:
+        name: apache_network
+        driver: bridge
+
+    - name: Run Apache Container
+      docker_container:
+        name: apache_container
+        image: httpd:latest
+        ports:
+          - "8080:80"
+        volumes:
+          - C:\Users\hp\Desktop\network\ansible_docker\index.html:/usr/local/apache2/htdocs
+        networks:
+          - name: apache_network
+        restart_policy: always
