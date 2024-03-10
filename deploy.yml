@@ -1,0 +1,30 @@
+---
+- name: Deploy Docker Container with Apache on localhost
+  hosts: localhost
+  become: yes
+
+  vars:
+    container_subnet: "172.168.10.0/30"
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+
+    - name: Pull Apache Docker Image
+      docker_image:
+        name: httpd:latest
+
+    - name: Run Apache Container
+      docker_container:
+        name: apache_container
+        image: httpd:latest
+        ports:
+          - "80:80"
+        restart_policy: always
