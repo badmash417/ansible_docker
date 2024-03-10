@@ -30,7 +30,8 @@
         ports:
           - "8080:80"
         volumes:
-          - C:\Users\hp\Desktop\network\ansible_docker\index.html:/usr/local/apache2/htdocs
+          - /c/Users/hp/Desktop/network/ansible_docker/index.html:/usr/local/apache2/htdocs
         networks:
           - name: apache_network
         restart_policy: always
+
