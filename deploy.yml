@@ -18,6 +18,13 @@
         repo: git@github.com:httpd/docker-httpd.git
         dest: /opt/docker-httpd
         version: main  # Specify the branch or tag if needed
+    
+    - name: Add GitHub Host Key to known_hosts
+      known_hosts:
+        path: "/root/.ssh/known_hosts"  # Adjust the path as needed
+        name: github.com
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
 
     - name: Deploy Docker Container
       command: "docker-compose up -d"
